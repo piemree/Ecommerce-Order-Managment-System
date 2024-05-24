@@ -30,8 +30,19 @@ async function removeItem(req, res, next) {
     }
 }
 
+async function updateItemQuantity(req, res, next) {
+    try {
+        const { productId, quantity } = req.body;
+        const basket = await basketService.updateItemQuantity(req.user.id, productId, quantity);
+        res.json(basket);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     getBasket,
     addItem,
-    removeItem
+    removeItem,
+    updateItemQuantity
 };
