@@ -10,8 +10,8 @@ class BaseService {
         return this.model.findMany();
     }
 
-    findFirst = async (id) => {
-        return this.model.findFirst({ where: { id } });
+    findFirst = async (query) => {
+        return this.model.findFirst(query);
     }
 
     updateById = async (id, data) => {
