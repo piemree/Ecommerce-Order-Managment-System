@@ -1,5 +1,6 @@
 const { verifyUser } = require("../services/auth.service");
 const AppError = require("../errors/App.error");
+const _ = require("lodash");
 
 async function authenticate(req, res, next) {
     const token = req.headers.authorization?.split(" ")[1];
@@ -8,7 +9,7 @@ async function authenticate(req, res, next) {
     }
     try {
         const user = await verifyUser(token);
-        req.user = user;
+        req.user = _.pick(user, ["id", "email"]);
         next();
     } catch (error) {
         next(AppError.Unauthorized());
