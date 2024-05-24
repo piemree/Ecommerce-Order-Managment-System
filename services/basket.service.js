@@ -145,7 +145,7 @@ class BasketService extends BaseService {
     }
 
     updateItemQuantity = async (userId, productId, quantity) => {
-        const basket = await this.findFirst({
+        const basket = await this.model.findFirst({
             where: {
                 userId
             },
@@ -154,11 +154,11 @@ class BasketService extends BaseService {
             }
         });
 
-        if (!basket) return false;
+        if (!basket) return basket;
 
         const item = basket.items.find(item => item.productId === productId);
 
-        if (!item) return false;
+        if (!item) return basket;
 
         if (quantity <= 0) {
             return await this.model.update({
@@ -171,6 +171,9 @@ class BasketService extends BaseService {
                             productId
                         }
                     }
+                },
+                include: {
+                    items: true
                 }
             });
         }
@@ -189,7 +192,10 @@ class BasketService extends BaseService {
                             quantity
                         }
                     }
-                }
+                },
+            },
+            include: {
+                items: true
             }
         });
     }
