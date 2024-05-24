@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  fullName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Basket    Basket?
+  Order     Order[]
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  products    Product[]
+}
+
+model Product {
+  id             Int          @id @default(autoincrement())
+  title          String
+  categoryId     Int
+  category       Category     @relation(fields: [categoryId], references: [id])
+  description    String
+  price          Float
+  stock_quantity Int
+  origin         String
+  roastLevel     String
+  flavorNotes    String[]
+  BasketItem     BasketItem[]
+  OrderItem      OrderItem[]
+  Campaign       Campaign[]
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+}
+
+model Basket {
+  id     Int          @id @default(autoincrement())
+  user   User         @relation(fields: [userId], references: [id])
+  userId Int          @unique
+  items  BasketItem[]
+}
+
+model BasketItem {
+  id        Int     @id @default(autoincrement())
+  basketId  Int
+  basket    Basket  @relation(fields: [basketId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  userId     Int
+  user       User        @relation(fields: [userId], references: [id])
+  items      OrderItem[]
+  cargoPrice Float
+  subTotal   Float
+  total      Float
+  campaign   Campaign?   @relation(fields: [campaignId], references: [id])
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  campaignId Int?
+}
+
+model Campaign {
+  id          Int      @id @default(autoincrement())
+  discount    Float
+  minAmount   Float
+  giftProduct Product  @relation(fields: [productId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  productId   Int
+  Order       Order[]
+}
+
+model Settings {
+  id        Int      @id @default(autoincrement())
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
