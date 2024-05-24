@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   email     String   @unique
   password  String
   fullName  String
@@ -57,7 +57,7 @@ enum OrderStatus {
 model Basket {
   id     Int          @id @default(autoincrement())
   user   User         @relation(fields: [userId], references: [id])
-  userId Int          @unique
+  userId String       @unique
   items  BasketItem[]
 }
 
@@ -81,7 +81,7 @@ model OrderItem {
 
 model Order {
   id         Int         @id @default(autoincrement())
-  userId     Int
+  userId     String
   user       User        @relation(fields: [userId], references: [id])
   items      OrderItem[]
   cargoPrice Float
