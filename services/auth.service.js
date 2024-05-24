@@ -52,13 +52,12 @@ class AuthService extends BaseService {
     }
 
     verifyToken = async (token) => {
-        return jwt.verify(token, process.env.JWT_SECRET);
+        return await jwt.verify(token, process.env.JWT_SECRET);
     }
 
     verifyUser = async (token) => {
-        const { userId } = this.verifyToken(token)
-        console.log(this);
-        return this.model.findUnique({
+        const { userId } = await this.verifyToken(token)
+        return this.model.findFirst({
             where: {
                 id: userId,
             },

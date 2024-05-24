@@ -1,6 +1,7 @@
+const AppError = require('../errors/App.error.js');
 const authService = require('../services/auth.service.js');
 
-async function login(req, res) {
+async function login(req, res, next) {
     try {
         const data = {
             email: req.body.email,
@@ -9,11 +10,11 @@ async function login(req, res) {
         const token = await authService.login(data);
         res.json({ token });
     } catch (error) {
-        res.status(500).send(error.message);
+        next(AppError.BadRequest());
     }
 }
 
-async function register(req, res) {
+async function register(req, res, next) {
     try {
         const data = {
             email: req.body.email,
@@ -23,7 +24,7 @@ async function register(req, res) {
         const user = await authService.register(data);
         res.json(user);
     } catch (error) {
-        res.status(500).send(error.message);
+        next(AppError.BadRequest());
     }
 }
 module.exports = {
