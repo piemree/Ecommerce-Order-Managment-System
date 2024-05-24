@@ -6,7 +6,6 @@ function authenticate(req, res, next) {
         return res.status(401).send("Unauthorized");
     }
     try {
-        console.log("token",token);
         const user = verifyUser(token);
         req.user = user;
         next();
