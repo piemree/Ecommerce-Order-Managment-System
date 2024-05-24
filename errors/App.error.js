@@ -24,6 +24,10 @@ class AppError extends Error {
         return new AppError("Internal Server Error", 500);
     }
 
+    static StockNotAvailable() {
+        return new AppError("Stock is not available", 400);
+    }
+
 }
 
 

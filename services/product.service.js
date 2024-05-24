@@ -24,11 +24,11 @@ class ProductService extends BaseService {
         const product = await this.model.findFirst({
             where: { id },
             select: {
-                stock_quantity: true
+                stockQuantity: true
             }
         })
 
-        return product.stock_quantity >= quantity
+        return product.stockQuantity >= quantity
     }
 }
 
