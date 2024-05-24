@@ -38,7 +38,7 @@ model Product {
   category       Category     @relation(fields: [categoryId], references: [id])
   description    String
   price          Float
-  stock_quantity Int
+  stockQuantity Int
   origin         String
   roastLevel     String
   flavorNotes    String[]

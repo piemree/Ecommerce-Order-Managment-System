@@ -7,6 +7,19 @@ class ProductService extends BaseService {
         this.model = prisma.product;
     }
 
+    createProduct = async (data, categoryId) => {
+        return this.model.create({
+            data: {
+                category: {
+                    connect: {
+                        id: categoryId
+                    },
+                },
+                ...data
+            }
+        });
+    }
+
     checkProductStock = async (id, quantity) => {
         const product = await this.model.findFirst({
             where: { id },

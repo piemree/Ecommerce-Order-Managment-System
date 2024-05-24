@@ -3,7 +3,7 @@ class BaseService {
     constructor() { }
 
     create = async (data) => {
-        return this.model.create({ data });
+        return this.model.create(data );
     }
 
     findMany = async () => {

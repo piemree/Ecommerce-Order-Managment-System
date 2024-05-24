@@ -5,6 +5,7 @@ const router = express.Router();
 router.use('/auth', require('./auth.router'));
 router.use(authenticate);
 router.use('/product', require('./product.router'));
+router.use('/basket', require('./basket.router'));
 router.use('/category', require('./category.router'));
 
 

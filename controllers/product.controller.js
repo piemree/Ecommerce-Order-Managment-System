@@ -1,3 +1,4 @@
+const { category } = require('../prisma/index.js');
 const productService = require('../services/product.service.js');
 
 async function getProducts(req, res) {
@@ -13,15 +14,16 @@ async function createProduct(req, res) {
     try {
         const productData = {
             title: req.body?.title,
-            category_id: req.body?.category_id,
+            categoryId: req.body?.categoryId,
             description: req.body?.description,
             price: req.body?.price,
-            stock_quantity: req.body?.stock_quantity,
+            stockQuantity: req.body?.stockQuantity,
             origin: req.body?.origin,
-            roast_level: req.body?.roast_level,
-            flavor_notes: req.body?.flavor_notes
+            roastLevel: req.body?.roastLevel,
+            flavorNotes: req.body?.flavorNotes
         }
-        const product = await productService.create(productData);
+        delete productData.categoryId;
+        const product = await productService.createProduct(productData, req.body?.categoryId);
         res.json(product);
     } catch (error) {
         res.status(500).send(error.message);
