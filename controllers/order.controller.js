@@ -13,10 +13,10 @@ async function createOrder(req, res) {
     try {
         const total = req.body.orderItems.reduce((acc, item) => acc + item.price, 0);
         const orderData = {
-        
-           orderItems: req.body.orderItems,
+
+            orderItems: req.body.orderItems,
         }
-        const order = await orderService.create(orderData);
+        const order = await orderService.create({ data: orderData });
         res.json(order);
     } catch (error) {
         res.status(500).send(error.message);

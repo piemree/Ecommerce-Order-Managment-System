@@ -56,15 +56,21 @@ enum OrderStatus {
 }
 
 model Basket {
-  id            Int          @id @default(autoincrement())
-  user          User         @relation(fields: [userId], references: [id])
-  userId        String       @unique
-  items         BasketItem[]
-  total         Float
-  totalDiscount Float
-  Campaign      Campaign?    @relation(fields: [campaignId], references: [id])
-  campaignId    Int?
+  id               Int          @id @default(autoincrement())
+  user             User         @relation(fields: [userId], references: [id])
+  userId           String       @unique
+  items            BasketItem[]
+  cargoPrice       Float        @default(0)
+  subtotal         Float        @default(0)
+  total            Float        @default(0)
+  campaignDiscount Float        @default(0)
+  couponDiscount   Float        @default(0)
+  totalDiscount    Float        @default(0)
+  Campaign         Campaign?    @relation(fields: [campaignId], references: [id])
+  campaignId       Int?
 }
+
+
 
 model BasketItem {
   id        Int     @id @default(autoincrement())
@@ -72,6 +78,7 @@ model BasketItem {
   basket    Basket  @relation(fields: [basketId], references: [id])
   productId Int
   product   Product @relation(fields: [productId], references: [id])
+  isGift    Boolean @default(false)
   quantity  Int
 }
 
@@ -98,14 +105,15 @@ model Order {
 }
 
 model Campaign {
-  id          Int      @id @default(autoincrement())
-  discount    Float
-  minAmount   Float
-  giftProduct Product  @relation(fields: [productId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  productId   Int
-  Basket      Basket[]
+  id            Int      @id @default(autoincrement())
+  name          String
+  discountPct   Float
+  minAmount     Float
+  giftProduct   Product? @relation(fields: [giftProductId], references: [id])
+  giftProductId Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Basket        Basket[]
 }
 
 model Coupon {

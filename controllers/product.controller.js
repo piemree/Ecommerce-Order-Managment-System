@@ -30,7 +30,18 @@ async function createProduct(req, res) {
     }
 }
 
+async function updateProductStock(req, res, next) {
+    try {
+        const { productId, quantity } = req.body;
+        const product = await productService.updateProductStock(productId, quantity);
+        res.json(product);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     getProducts,
-    createProduct
+    createProduct,
+    updateProductStock
 };

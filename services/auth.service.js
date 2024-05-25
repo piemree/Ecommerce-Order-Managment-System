@@ -2,6 +2,7 @@ const prisma = require('../prisma');
 const BaseService = require('./base.service');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const AppError = require('../errors/app.error');
 const _ = require('lodash');
 
 class AuthService extends BaseService {
@@ -16,16 +17,12 @@ class AuthService extends BaseService {
                 email: data.email,
             },
         });
-
-        if (!user) {
-            throw new Error('Invalid email or password');
-        }
+        if (!user) throw new AppError('Invalid email or password', 400)
 
         const isPasswordValid = await this.comparePassword(data.password, user.password);
 
-        if (!isPasswordValid) {
-            throw new Error('Invalid email or password');
-        }
+        if (!isPasswordValid) throw new AppError('Invalid email or password', 400)
+
 
         return await this.generateToken(user);
     }
@@ -52,7 +49,7 @@ class AuthService extends BaseService {
     }
 
     verifyToken = async (token) => {
-        return await jwt.verify(token, process.env.JWT_SECRET);
+        return jwt.verify(token, process.env.JWT_SECRET);
     }
 
     verifyUser = async (token) => {

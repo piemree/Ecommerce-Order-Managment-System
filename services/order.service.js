@@ -19,9 +19,6 @@ class OrderService extends BaseService {
             throw new Error('Basket not found');
         }
 
-        console.log(userBasket);
-
-
     }
 }
 

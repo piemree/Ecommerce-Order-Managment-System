@@ -15,7 +15,7 @@ async function createCategory(req, res, next) {
             title: req.body?.title,
             description: req.body?.description
         }
-        const category = await categoryService.create(categoryData);
+        const category = await categoryService.create({ data: categoryData });
         res.json(category);
     } catch (error) {
         next(error);
