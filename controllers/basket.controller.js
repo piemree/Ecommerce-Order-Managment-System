@@ -48,16 +48,6 @@ async function updateItemQuantity(req, res, next) {
     }
 }
 
-async function applyCoupon(req, res, next) {
-    try {
-        const { couponCode } = req.body;
-        const basket = await basketService.applyCoupon(req.user.id, couponCode);
-        res.json(basket);
-    } catch (error) {
-        next(error);
-    }
-}
-
 
 
 
@@ -65,6 +55,5 @@ module.exports = {
     getBasket,
     addItem,
     removeItem,
-    updateItemQuantity,
-    applyCoupon
+    updateItemQuantity
 };

@@ -3,8 +3,6 @@ const BaseService = require('./base.service');
 const productService = require('./product.service');
 const campaignService = require('./campaign.service');
 const settingsService = require('./settings.service');
-const couponService = require('./coupon.service');
-const AppError = require('../errors/app.error');
 const { calc } = require('../utils/decimal.util');
 
 class BasketService extends BaseService {
@@ -50,7 +48,7 @@ class BasketService extends BaseService {
     }
 
     addItem = async (userId, productId, quantity = 1) => {
-        const basketPromise = this.model.findFirst({
+        const basketPromise = this.findFirst({
             where: {
                 userId
             },
@@ -105,8 +103,12 @@ class BasketService extends BaseService {
                             }
                         }
                     },
-                    subtotal: calc(basket.subtotal + (quantity * product.price)),
-                    total: calc(basket.total + (quantity * product.price))
+                    subtotal: {
+                        increment: quantity * product.price
+                    },
+                    total: {
+                        increment: quantity * product.price
+                    }
                 },
                 include: {
                     items: true
@@ -126,10 +128,12 @@ class BasketService extends BaseService {
                         quantity: quantity ? quantity : 1
                     }
                 },
-                subtotal: calc(basket.subtotal + (quantity * product.price)),
-
-                total: calc(basket.total + (quantity * product.price))
-
+                subtotal: {
+                    increment: quantity * product.price
+                },
+                total: {
+                    increment: quantity * product.price
+                }
             },
             include: {
                 items: true
@@ -164,7 +168,6 @@ class BasketService extends BaseService {
                 },
                 cargoPrice: 0,
                 campaignDiscount: 0,
-                couponDiscount: 0,
                 totalDiscount: 0,
                 total: 0,
                 subtotal: 0
@@ -265,8 +268,12 @@ class BasketService extends BaseService {
                         }
                     }
                 },
-                subtotal: calc(basket.subtotal + netPrice),
-                total: calc(basket.total + netPrice)
+                subtotal: {
+                    increment: netPrice
+                },
+                total: {
+                    increment: netPrice
+                }
             },
             include: {
                 items: true
@@ -316,7 +323,9 @@ class BasketService extends BaseService {
             },
             data: {
                 cargoPrice: settings.cargoPrice,
-                total: calc(basket.total + netCargoPrice)
+                total: {
+                    increment: netCargoPrice
+                }
             },
             include: {
                 items: true
@@ -324,7 +333,6 @@ class BasketService extends BaseService {
         });
 
     }
-
     applyOrCancelCampaign = async (userId) => {
         const basket = await this.getBasket(userId);
 
@@ -346,8 +354,12 @@ class BasketService extends BaseService {
                         disconnect: true
                     },
                     campaignDiscount: 0,
-                    totalDiscount: calc(basket.totalDiscount - basket.campaignDiscount),
-                    total: calc(basket.total + basket.campaignDiscount)
+                    totalDiscount: {
+                        decrement: basket.campaignDiscount
+                    },
+                    total: {
+                        increment: basket.campaignDiscount
+                    }
                 },
                 include: {
                     items: true,
@@ -372,7 +384,9 @@ class BasketService extends BaseService {
                 },
                 campaignDiscount: campaignDiscount,
                 totalDiscount: calc(basket.couponDiscount + campaignDiscount),
-                total: calc(basket.total - campaignDiscount)
+                total: {
+                    decrement: campaignDiscount
+                }
             },
             include: {
                 items: true,
@@ -381,57 +395,6 @@ class BasketService extends BaseService {
         });
 
         return newBasket;
-
-    }
-
-    applyCoupon = async (userId, couponCode) => {
-        const basket = await this.getBasket(userId);
-
-        if (!basket) return false;
-        if (basket.items.length === 0) return await this.resetBasket(userId);
-
-        const coupon = await couponService.isCouponCodeAvailable(userId, couponCode);
-        if (!coupon) throw new AppError('Invalid coupon code');
-
-
-        if (coupon.isPercent) {
-            const couponDiscount = calc(basket.subtotal * coupon.discountPct / 100);
-            return await this.model.update({
-                where: {
-                    id: basket.id
-                },
-                data: {
-                    couponDiscount: couponDiscount,
-                    totalDiscount: calc(basket.campaignDiscount + couponDiscount),
-                    total: {
-                        decrement: couponDiscount
-                    }
-                },
-                include: {
-                    items: true,
-                    Campaign: true
-                }
-            });
-
-        }
-
-        return await this.model.update({
-            where: {
-                id: basket.id
-            },
-            data: {
-                couponDiscount: coupon.discount,
-                totalDiscount: calc(basket.campaignDiscount + coupon.discount),
-                total: {
-                    decrement: coupon.discount > basket.total ? basket.total : coupon.discount
-                }
-            },
-            include: {
-                items: true,
-                Campaign: true
-            }
-        });
-
 
     }
 }
