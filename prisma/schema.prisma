@@ -55,6 +55,16 @@ enum OrderStatus {
   DELIVERED
 }
 
+model BasketItem {
+  id        Int     @id @default(autoincrement())
+  basketId  Int
+  basket    Basket  @relation(fields: [basketId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  isGift    Boolean @default(false)
+  quantity  Int
+}
+
 model Basket {
   id               Int          @id @default(autoincrement())
   user             User         @relation(fields: [userId], references: [id])
@@ -70,36 +80,31 @@ model Basket {
   campaignId       Int?
 }
 
-model BasketItem {
-  id        Int     @id @default(autoincrement())
-  basketId  Int
-  basket    Basket  @relation(fields: [basketId], references: [id])
-  productId Int
-  product   Product @relation(fields: [productId], references: [id])
-  isGift    Boolean @default(false)
-  quantity  Int
-}
-
 model OrderItem {
   id        Int     @id @default(autoincrement())
   orderId   Int
   order     Order   @relation(fields: [orderId], references: [id])
   productId Int
   product   Product @relation(fields: [productId], references: [id])
+  isGift    Boolean @default(false)
   quantity  Int
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  userId     String
-  user       User        @relation(fields: [userId], references: [id])
-  items      OrderItem[]
-  cargoPrice Float
-  subTotal   Float
-  total      Float
-  status     OrderStatus @default(PROCESSING)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id               Int         @id @default(autoincrement())
+  userId           String
+  user             User        @relation(fields: [userId], references: [id])
+  items            OrderItem[]
+  cargoPrice       Float       @default(0)
+  shippingAddress  String
+  subTotal         Float       @default(0)
+  total            Float       @default(0)
+  status           OrderStatus @default(PROCESSING)
+  campaignDiscount Float       @default(0)
+  couponDiscount   Float       @default(0)
+  totalDiscount    Float       @default(0)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 }
 
 model Campaign {

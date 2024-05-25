@@ -8,16 +8,11 @@ class OrderService extends BaseService {
         this.model = prisma.order;
     }
 
-    create = async (userId) => {
-        const userBasket = await BasketService.findFirst({
-            where: {
-                userId
-            }
-        })
+    createOrder = async (userId) => {
+        const userBasket = await BasketService.getBasket(userId);
 
-        if (!userBasket) {
-            throw new Error('Basket not found');
-        }
+
+
 
     }
 }
