@@ -280,7 +280,6 @@ class BasketService extends BaseService {
         });
     }
 
-    
 
     applyOrCancelCampaign = async (userId) => {
         const basket = await this.getBasket(userId);
