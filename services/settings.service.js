@@ -4,28 +4,28 @@ class SettingsService {
 
     constructor() { }
 
-    async getAllSettings() {
-        return await prisma.settings.findMany();
+    async createSetting(data) {
+        const settings = await prisma.settings.findUnique({
+            where: { id: 1 }
+        });
+        if (settings) return settings;
+        return await prisma.settings.create({ data });
     }
 
-    async getSetting(key) {
-        return await prisma.settings.findFirst({
-            where: {
-                key: key
-            }
+    async getSettings() {
+        return await prisma.settings.findUnique({
+            where: { id: 1 }
+        })
+    }
+
+
+    async updateSettings(data) {
+        return await prisma.settings.update({
+            where: { id: 1 },
+            data
         });
     }
 
-    async setSetting(key, value) {
-        await prisma.settings.update({
-            where: {
-                key: key
-            },
-            data: {
-                value: value
-            }
-        });
-    }
 }
 
 module.exports = new SettingsService();

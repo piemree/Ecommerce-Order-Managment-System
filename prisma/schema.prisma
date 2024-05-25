@@ -70,8 +70,6 @@ model Basket {
   campaignId       Int?
 }
 
-
-
 model BasketItem {
   id        Int     @id @default(autoincrement())
   basketId  Int
@@ -132,9 +130,9 @@ model Coupon {
 }
 
 model Settings {
-  id        Int      @id @default(autoincrement())
-  key       String
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                    Int      @id @default(autoincrement())
+  cargoPrice            Float    @default(0)
+  minAmountForFreeCargo Float    @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }

@@ -2,6 +2,8 @@ const prisma = require('../prisma');
 const BaseService = require('./base.service');
 const productService = require('./product.service');
 const campaignService = require('./campaign.service');
+const settingsService = require('./settings.service');
+const { calc } = require('../utils/decimal.util');
 
 class BasketService extends BaseService {
     constructor() {
@@ -112,7 +114,7 @@ class BasketService extends BaseService {
                     items: true
                 }
             });
-            return await this.applyOrCancelCampaign(userId);
+            return await this.basketControls(userId);
         }
 
         await this.model.update({
@@ -137,7 +139,7 @@ class BasketService extends BaseService {
                 items: true
             }
         });
-        return await this.applyOrCancelCampaign(userId);
+        return await this.basketControls(userId);
 
     }
 
@@ -164,6 +166,7 @@ class BasketService extends BaseService {
                 Campaign: {
                     disconnect: true
                 },
+                cargoPrice: 0,
                 campaignDiscount: 0,
                 totalDiscount: 0,
                 total: 0,
@@ -193,7 +196,7 @@ class BasketService extends BaseService {
 
         const basketItem = basket.items.find(item => item.productId === productId);
 
-        if (!basketItem) return basket;
+        if (!basketItem) return await this.resetBasket(userId);
 
         if (basket.items.length === 1) {
             return await this.resetBasket(userId);
@@ -221,7 +224,7 @@ class BasketService extends BaseService {
             }
         });
 
-        return await this.applyOrCancelCampaign(userId);
+        return await this.basketControls(userId);
     }
 
     updateItemQuantity = async (userId, productId, quantity) => {
@@ -230,7 +233,11 @@ class BasketService extends BaseService {
                 userId
             },
             include: {
-                items: true
+                items: {
+                    include: {
+                        product: true
+                    }
+                }
             }
         });
 
@@ -240,25 +247,13 @@ class BasketService extends BaseService {
 
         if (!item) return basket;
 
-        if (quantity <= 0) {
-            return await this.model.update({
-                where: {
-                    id: basket.id
-                },
-                data: {
-                    items: {
-                        deleteMany: {
-                            productId
-                        }
-                    }
-                },
-                include: {
-                    items: true
-                }
-            });
-        }
+        if (quantity <= 0) await this.resetBasket(userId)
 
-        return await this.model.update({
+        const oldPrice = calc(item.product.price * item.quantity) //item.product.price * item.quantity;
+        const newPrice = calc(item.product.price * quantity) //item.product.price * quantity; 
+        const netPrice = calc(newPrice - oldPrice) //newPrice - oldPrice;
+
+        await this.model.update({
             where: {
                 id: basket.id
             },
@@ -273,14 +268,71 @@ class BasketService extends BaseService {
                         }
                     }
                 },
+                subtotal: {
+                    increment: netPrice
+                },
+                total: {
+                    increment: netPrice
+                }
             },
             include: {
                 items: true
             }
         });
+
+        return await this.basketControls(userId);
     }
 
+    basketControls = async (userId) => {
+        await this.checkCargo(userId)
+        return await this.applyOrCancelCampaign(userId)
+    }
 
+    checkCargo = async (userId) => {
+        const basket = await this.getBasket(userId);
+
+        if (!basket) return false;
+
+        if (basket.items.length === 0) return await this.resetBasket(userId);
+
+        const settings = await settingsService.getSettings();
+        if (basket.subtotal >= settings.minAmountForFreeCargo) {
+            return await this.model.update({
+                where: {
+                    id: basket.id
+                },
+                data: {
+                    cargoPrice: 0,
+                    total: {
+                        decrement: basket.cargoPrice
+                    }
+                },
+                include: {
+                    items: true
+                }
+            });
+        }
+
+        if (basket.cargoPrice === settings.cargoPrice) return basket;
+
+        const netCargoPrice = Math.abs(calc(basket.cargoPrice - settings.cargoPrice))
+
+        return await this.model.update({
+            where: {
+                id: basket.id
+            },
+            data: {
+                cargoPrice: settings.cargoPrice,
+                total: {
+                    increment: netCargoPrice
+                }
+            },
+            include: {
+                items: true
+            }
+        });
+
+    }
     applyOrCancelCampaign = async (userId) => {
         const basket = await this.getBasket(userId);
 
@@ -318,7 +370,7 @@ class BasketService extends BaseService {
 
         if (basket.Campaign && basket.Campaign.id === campaign.id) return basket;
 
-        const campaignDiscount = basket.subtotal * campaign.discountPct / 100;
+        const campaignDiscount = calc(basket.subtotal * campaign.discountPct / 100);
 
         const newBasket = await this.model.update({
             where: {
@@ -331,7 +383,7 @@ class BasketService extends BaseService {
                     },
                 },
                 campaignDiscount: campaignDiscount,
-                totalDiscount: basket.couponDiscount + campaignDiscount,
+                totalDiscount: calc(basket.couponDiscount + campaignDiscount),
                 total: {
                     decrement: campaignDiscount
                 }
