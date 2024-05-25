@@ -14,15 +14,15 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(cuid())
-  email      String   @unique
-  password   String
-  fullName   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  Basket     Basket?
-  usedCoupon Coupon[]
-  Order      Order[]
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  fullName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Basket    Basket?
+  Order     Order[]
+  Coupon    Coupon[]
 }
 
 model Category {
@@ -116,17 +116,16 @@ model Campaign {
 
 model Coupon {
   id          Int      @id @default(autoincrement())
-  code        String
+  code        String   @unique
   isActive    Boolean
   isPercent   Boolean
   discountPct Float
   discount    Float
-  useCount    Int
-  maxUseCount Int
+  usageLimit  Int
+  usageCount  Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  User        User?    @relation(fields: [userId], references: [id])
-  userId      String?
+  User        User[]
 }
 
 model Settings {

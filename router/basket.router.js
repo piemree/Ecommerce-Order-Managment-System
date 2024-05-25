@@ -6,6 +6,7 @@ router.get('/', basketController.getBasket);
 router.patch('/add-item', basketController.addItem);
 router.patch('/remove-item', basketController.removeItem);
 router.patch('/update-item-quantity', basketController.updateItemQuantity);
+router.patch('/apply-coupon', basketController.applyCoupon);
 
 
 module.exports = router;
