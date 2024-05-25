@@ -209,12 +209,9 @@ class BasketService extends BaseService {
                         productId
                     }
                 },
-                subtotal: {
-                    decrement: basketItem.product.price * basketItem.quantity
-                },
-                total: {
-                    decrement: basketItem.product.price * basketItem.quantity
-                }
+                subtotal: calc(basket.subtotal - (basketItem.product.price * basketItem.quantity)),
+                total: calc(basket.total - (basketItem.product.price * basketItem.quantity))
+
             },
             include: {
                 items: true
@@ -296,9 +293,8 @@ class BasketService extends BaseService {
                 },
                 data: {
                     cargoPrice: 0,
-                    total: {
-                        decrement: basket.cargoPrice
-                    }
+                    total: calc(basket.total - basket.cargoPrice)
+
                 },
                 include: {
                     items: true
@@ -324,6 +320,8 @@ class BasketService extends BaseService {
         });
 
     }
+
+
 
     applyOrCancelCampaign = async (userId) => {
         const basket = await this.getBasket(userId);
@@ -370,12 +368,33 @@ class BasketService extends BaseService {
                         id: campaign.id
                     },
                 },
+                ...(
+                    campaign.giftProductId ? {
+                        items: {
+                            create: {
+                                isGift: true,
+                                productId: campaign.giftProductId,
+                                quantity: 1
+                            }
+                        }
+                    } : {
+                        items: {
+                            deleteMany: {
+                                isGift: true
+                            }
+                        }
+                    }
+                ),
                 campaignDiscount: campaignDiscount,
                 totalDiscount: calc(basket.couponDiscount + campaignDiscount),
                 total: calc(basket.total - campaignDiscount)
             },
             include: {
-                items: true,
+                items: {
+                    include: {
+                        product: true
+                    }
+                },
                 Campaign: true
             }
         });
@@ -403,9 +422,7 @@ class BasketService extends BaseService {
                 data: {
                     couponDiscount: couponDiscount,
                     totalDiscount: calc(basket.campaignDiscount + couponDiscount),
-                    total: {
-                        decrement: couponDiscount
-                    }
+                    total: calc(basket.total - couponDiscount)
                 },
                 include: {
                     items: true,
@@ -422,9 +439,7 @@ class BasketService extends BaseService {
             data: {
                 couponDiscount: coupon.discount,
                 totalDiscount: calc(basket.campaignDiscount + coupon.discount),
-                total: {
-                    decrement: coupon.discount > basket.total ? basket.total : coupon.discount
-                }
+                total: calc(basket.total - (coupon.discount > basket.total ? basket.total : coupon.discount))
             },
             include: {
                 items: true,
