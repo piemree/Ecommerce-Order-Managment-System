@@ -1,25 +1,21 @@
 const orderService = require('../services/order.service.js');
 
-async function getOrders(req, res) {
+async function getOrders(req, res, next) {
     try {
-        const orders = await orderService.findMany();
+        const orders = await orderService.getOrders(req.user.id);
         res.json(orders);
     } catch (error) {
-        res.status(500).send(error.message);
+        next(error);
     }
 }
 
-async function createOrder(req, res) {
+async function createOrder(req, res, next) {
     try {
-        const total = req.body.orderItems.reduce((acc, item) => acc + item.price, 0);
-        const orderData = {
-
-            orderItems: req.body.orderItems,
-        }
-        const order = await orderService.create({ data: orderData });
+        const { shippingAddress } = req.body;
+        const order = await orderService.createOrder(req.user.id, shippingAddress);
         res.json(order);
     } catch (error) {
-        res.status(500).send(error.message);
+        next(error);
     }
 }
 

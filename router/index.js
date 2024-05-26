@@ -10,6 +10,7 @@ router.use('/category', require('./category.router'));
 router.use('/campaign', require('./campaign.router'));
 router.use('/settings', require('./settings.router'));
 router.use('/coupon', require('./coupon.router'));
+router.use('/order', require('./order.router'));
 
 
 module.exports = router;

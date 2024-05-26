@@ -97,7 +97,7 @@ model Order {
   items            OrderItem[]
   cargoPrice       Float       @default(0)
   shippingAddress  String
-  subTotal         Float       @default(0)
+  subtotal         Float       @default(0)
   total            Float       @default(0)
   status           OrderStatus @default(PROCESSING)
   campaignDiscount Float       @default(0)
@@ -105,6 +105,8 @@ model Order {
   totalDiscount    Float       @default(0)
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
+  Campaign         Campaign?   @relation(fields: [campaignId], references: [id])
+  campaignId       Int?
 }
 
 model Campaign {
@@ -117,6 +119,7 @@ model Campaign {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   Basket        Basket[]
+  Order         Order[]
 }
 
 model Coupon {

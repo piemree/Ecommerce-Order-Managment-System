@@ -24,7 +24,7 @@ class BasketService extends BaseService {
                         product: true
                     }
                 },
-                Campaign: true
+                Campaign: true,
             }
         });
         if (basket) return basket;
