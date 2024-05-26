@@ -1,0 +1,181 @@
+[
+  {
+    "title": "Harika Kahve",
+    "description": "Özel karışım, harika lezzet!",
+    "price": 24.99,
+    "stockQuantity": 50,
+    "origin": "Brezilya",
+    "roastLevel": "Orta",
+    "flavorNotes": ["Çikolata", "Fındık", "Vanilya"]
+  },
+  {
+    "title": "Yoğun Lezzet",
+    "description": "Güçlü ve yoğun aromalar.",
+    "price": 29.99,
+    "stockQuantity": 30,
+    "origin": "Kolombiya",
+    "roastLevel": "Koyu",
+    "flavorNotes": ["Karamel", "Kara Kiraz", "Baharatlı"]
+  },
+  {
+    "title": "Hafif Sipariş",
+    "description": "Hafif ve ferahlatıcı bir deneyim.",
+    "price": 19.99,
+    "stockQuantity": 40,
+    "origin": "Etiyopya",
+    "roastLevel": "Hafif",
+    "flavorNotes": ["Meyve", "Çiçek", "Nane"]
+  },
+  {
+    "title": "Espresso Gücü",
+    "description": "Espresso severler için güçlü bir tercih.",
+    "price": 27.99,
+    "stockQuantity": 25,
+    "origin": "İtalya",
+    "roastLevel": "Orta-Koyu",
+    "flavorNotes": ["Çikolata", "Fındık", "Kavrulmuş Ekmek"]
+  },
+  {
+    "title": "Özel Karışım",
+    "description": "Uzmanlar tarafından özel olarak hazırlanan karışım.",
+    "price": 34.99,
+    "stockQuantity": 20,
+    "origin": "Karışık",
+    "roastLevel": "Orta",
+    "flavorNotes": ["Karışık Notlar"]
+  },
+  {
+    "title": "Doğal Yollarla Yetiştirilmiş",
+    "description": "Kimyasal gübre veya ilaç içermez.",
+    "price": 39.99,
+    "stockQuantity": 15,
+    "origin": "Peru",
+    "roastLevel": "Hafif",
+    "flavorNotes": ["Meyve", "Çiçek", "Ahududu"]
+  },
+  {
+    "title": "Geleneksel Türk Kahvesi",
+    "description": "Türk kahvesi keyfi evinizde!",
+    "price": 22.99,
+    "stockQuantity": 35,
+    "origin": "Türkiye",
+    "roastLevel": "Orta"
+  },
+  {
+    "title": "Vanilla Dream",
+    "description": "Vanilya sevenler için rüya gibi bir kahve.",
+    "price": 31.99,
+    "stockQuantity": 28,
+    "origin": "Madagaskar",
+    "roastLevel": "Orta",
+    "flavorNotes": ["Vanilya", "Karamel", "Hafif Baharatlı"]
+  },
+  {
+    "title": "Organik Karadeniz",
+    "description": "Doğal ve organik, Karadeniz'in en iyisi.",
+    "price": 26.99,
+    "stockQuantity": 22,
+    "origin": "Türkiye",
+    "roastLevel": "Orta-Koyu",
+    "flavorNotes": ["Çikolata", "Fındık", "Hafif Baharatlı"]
+  },
+  {
+    "title": "Özel Filtrasyon",
+    "description": "Özel filtre yöntemiyle hazırlanmış.",
+    "price": 29.99,
+    "stockQuantity": 18,
+    "origin": "Kenya",
+    "roastLevel": "Orta",
+    "flavorNotes": ["Meyve", "Çiçek", "Şeker Kamışı"]
+  },
+  {
+    "title": "Iced Coffee",
+    "description": "Soğuk kahve keyfi!",
+    "price": 17.99,
+    "stockQuantity": 45,
+    "origin": "Kolombiya",
+    "roastLevel": "Hafif",
+    "flavorNotes": ["Çikolata", "Kara Kiraz", "Buzlu"]
+  },
+  {
+    "title": "Kahve Çikolata Karışımı",
+    "description": "İki lezzet bir arada.",
+    "price": 32.99,
+    "stockQuantity": 23,
+    "origin": "Karışık",
+    "roastLevel": "Orta-Koyu",
+    "flavorNotes": ["Çikolata", "Vanilya", "Fındık"]
+  },
+  {
+    "title": "Bergamot Burst",
+    "description": "Bergamot aromasıyla canlanın!",
+    "price": 28.99,
+    "stockQuantity": 27,
+    "origin": "Kosta Rika",
+    "roastLevel": "Orta",
+    "flavorNotes": ["Bergamot", "Çiçek", "Meyve"]
+  },
+  {
+    "title": "Dark Delight",
+    "description": "Koyu kavrulmuş bir zevk.",
+    "price": 36.99,
+    "stockQuantity": 16,
+    "origin": "Brexit Coffee Co.",
+    "roastLevel": "Koyu",
+    "flavorNotes": ["Koyu Çikolata", "Fındık", "Kavrulmuş Ekmek"]
+  },
+  {
+    "title": "Sürpriz Karışım",
+    "description": "Her fincanda farklı bir lezzet sürprizi!",
+    "price": 38.99,
+    "stockQuantity": 14,
+    "origin": "Dünya Geneli",
+    "roastLevel": "Orta-Koyu",
+    "flavorNotes": ["Karışık Notlar"]
+  },
+  {
+    "title": "Şeker Kamışı Rüyası",
+    "description": "Doğal şeker kamışı notalarıyla tatlı bir deneyim.",
+    "price": 30.99,
+    "stockQuantity": 31,
+    "origin": "Brasil",
+    "roastLevel": "Orta",
+    "flavorNotes": ["Şeker Kamışı", "Vanilya", "Çikolata"]
+  },
+  {
+    "title": "Honey Hike",
+    "description": "Ballı bir yolculuk!",
+    "price": 25.99,
+    "stockQuantity": 29,
+    "origin": "Etiyopya",
+    "roastLevel": "Hafif",
+    "flavorNotes": ["Bal", "Meyve", "Çiçek"]
+  },
+  {
+    "title": "Mocha Magic",
+    "description": "Mocha severler için sihirli bir lezzet.",
+    "price": 33.99,
+    "stockQuantity": 21,
+    "origin": "Gana",
+    "roastLevel": "Orta-Koyu",
+    "flavorNotes": ["Çikolata", "Kahve", "Karamel"]
+  },
+  {
+    "title": "Exotic Espresso",
+    "description": "Espresso sevenler için egzotik bir seçenek.",
+    "price": 35.99,
+    "stockQuantity": 19,
+    "origin": "Endonezya",
+    "roastLevel": "Koyu",
+    "flavorNotes": ["Çikolata", "Baharatlı", "Vanilya"]
+  },
+  {
+    "title": "Tropikal Rüya",
+    "description": "Tropikal meyve notalarıyla dolu bir rüya.",
+    "price": 37.99,
+    "stockQuantity": 17,
+    "origin": "Kosta Rika",
+    "roastLevel": "Orta",
+    "flavorNotes": ["Mango", "Ananas", "Kokos"]
+  }
+]

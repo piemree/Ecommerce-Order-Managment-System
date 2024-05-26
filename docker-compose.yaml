@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  # Express.js app
+  app:
+    depends_on:
+      - postgres
+    container_name: express-app
+    build: .
+    # run the run.sh file
+    command: sh run.sh
+    ports:
+      - "3000:3000"
+    env_file:
+      - .prod.env
+
+  # PostgreSQL database
+  postgres:
+    container_name: postgres
+    image: postgres:alpine3.20
+    ports:
+      - "5454:5432"
+    environment:
+      DB_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ecommerce
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: {}

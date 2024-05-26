@@ -6,6 +6,7 @@ const BasketService = require('./basket.service');
 const productService = require('./product.service');
 const settingsService = require('./settings.service');
 const campaignService = require('./campaign.service');
+const mailService = require('./mail.service');
 const { $Enums } = require('@prisma/client');
 
 class OrderService extends BaseService {
@@ -70,7 +71,7 @@ class OrderService extends BaseService {
         await productService.bulkDecrementProductStock(order.items);
 
         await BasketService.resetBasket(userId);
-
+        await mailService.sendMail(userId, 'Order Created', 'Your order has been created successfully');
         return order;
     }
 

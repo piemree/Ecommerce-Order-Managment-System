@@ -1,0 +1,22 @@
+[
+  {
+    "name": "1000 TL ve üzeri %10 indirim",
+    "discountPct": 10,
+    "minAmount": 1000
+  },
+  {
+    "name": "1500 TL ve üzeri %15 indirim",
+    "discountPct": 15,
+    "minAmount": 1500
+  },
+  {
+    "name": "2000 TL ve üzeri %20 indirim",
+    "discountPct": 20,
+    "minAmount": 2000
+  },
+  {
+    "name": "3000 TL ve üzeri %25 indirim ve 1 adet hediye ürün",
+    "discountPct": 30,
+    "minAmount": 3000
+  }
+]

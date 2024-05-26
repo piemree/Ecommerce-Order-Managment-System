@@ -1,0 +1,9 @@
+{
+  "code": "TTN123TTT01",
+  "isActive": true,
+  "isPercent": true,
+  "discountPct": 10,
+  "discount": 0,
+  "usageLimit": 100,
+  "usageCount": 0
+}
