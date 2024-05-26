@@ -65,7 +65,7 @@ class BasketService extends BaseService {
         if (!product) throw new Error('Product not found');
 
         if (!basket) {
-            return await this.model.create({
+            await this.model.create({
                 data: {
                     user: {
                         connect: {
@@ -83,6 +83,7 @@ class BasketService extends BaseService {
                     items: true
                 }
             })
+            return await this.basketControls(userId);
         }
 
         const item = basket.items.find(item => item.productId === productId);
@@ -115,6 +116,8 @@ class BasketService extends BaseService {
             return await this.basketControls(userId);
         }
 
+        const subtotal = calc(basket.subtotal + (quantity * product.price));
+
         await this.model.update({
             where: {
                 id: basket.id
@@ -126,9 +129,9 @@ class BasketService extends BaseService {
                         quantity: quantity ? quantity : 1
                     }
                 },
-                subtotal: calc(basket.subtotal + (quantity * product.price)),
+                subtotal: subtotal,
 
-                total: calc(basket.total + (quantity * product.price))
+                total: await this.calculateBasketTotal(subtotal, basket.campaignDiscount, basket.couponDiscount)
 
             },
             include: {
@@ -175,7 +178,7 @@ class BasketService extends BaseService {
         });
     }
 
-    removeItem = async (userId, productId) => {
+    removeItem = async (userId, basketItemId) => {
         const basket = await prisma.basket.findFirst({
             where: {
                 userId
@@ -191,13 +194,13 @@ class BasketService extends BaseService {
 
         if (!basket) return basket
 
-        const basketItem = basket.items.find(item => item.productId === productId);
+        const basketItem = basket.items.find(item => item.id === basketItemId);
 
-        if (!basketItem) return await this.resetBasket(userId);
-
-        if (basket.items.length === 1) {
+        if (basket.items.length === 1 && basketItem.id == basketItemId) {
             return await this.resetBasket(userId);
         }
+
+        const subtotal = calc(basket.subtotal - (basketItem.product.price * basketItem.quantity));
 
         await this.model.update({
             where: {
@@ -205,12 +208,12 @@ class BasketService extends BaseService {
             },
             data: {
                 items: {
-                    deleteMany: {
-                        productId
+                    disconnect: {
+                        id: basketItemId
                     }
                 },
-                subtotal: calc(basket.subtotal - (basketItem.product.price * basketItem.quantity)),
-                total: calc(basket.total - (basketItem.product.price * basketItem.quantity))
+                subtotal: subtotal,
+                total: await this.calculateBasketTotal(subtotal, basket.campaignDiscount, basket.couponDiscount)
 
             },
             include: {
@@ -221,7 +224,7 @@ class BasketService extends BaseService {
         return await this.basketControls(userId);
     }
 
-    updateItemQuantity = async (userId, productId, quantity) => {
+    updateItemQuantity = async (userId, basketItemId, quantity) => {
         const basket = await this.model.findFirst({
             where: {
                 userId
@@ -237,15 +240,19 @@ class BasketService extends BaseService {
 
         if (!basket) return false;
 
-        const item = basket.items.find(item => item.productId === productId);
+        const item = basket.items.find(item => item.id === basketItemId);
 
         if (!item) return basket;
 
         if (quantity <= 0) await this.resetBasket(userId)
 
+        const isStockAvailable = await productService.isProductStockAvailable(item.productId, quantity);
+        if (!isStockAvailable) throw new AppError('Stock not available');
+
         const oldPrice = calc(item.product.price * item.quantity) //item.product.price * item.quantity;
         const newPrice = calc(item.product.price * quantity) //item.product.price * quantity; 
         const netPrice = calc(newPrice - oldPrice) //newPrice - oldPrice;
+
 
         await this.model.update({
             where: {
@@ -263,7 +270,7 @@ class BasketService extends BaseService {
                     }
                 },
                 subtotal: calc(basket.subtotal + netPrice),
-                total: calc(basket.total + netPrice)
+                total: await this.calculateBasketTotal(basket.subtotal + netPrice, basket.campaignDiscount, basket.couponDiscount)
             },
             include: {
                 items: true
@@ -273,10 +280,17 @@ class BasketService extends BaseService {
         return await this.basketControls(userId);
     }
 
+    calculateBasketTotal = async (subtotal, campaignDiscount, couponDiscount) => {
+        const settings = await settingsService.getSettings();
+        const cargoPrice = subtotal >= settings.minAmountForFreeCargo ? 0 : settings.cargoPrice;
+        return calc(subtotal - campaignDiscount - couponDiscount + cargoPrice);
+    }
+
     basketControls = async (userId) => {
         await this.checkCargo(userId)
         return await this.applyOrCancelCampaign(userId)
     }
+
 
     checkCargo = async (userId) => {
         const basket = await this.getBasket(userId);
@@ -293,7 +307,7 @@ class BasketService extends BaseService {
                 },
                 data: {
                     cargoPrice: 0,
-                    total: calc(basket.total - basket.cargoPrice)
+                    total: await this.calculateBasketTotal(basket.subtotal, basket.campaignDiscount, basket.couponDiscount)
 
                 },
                 include: {
@@ -304,7 +318,7 @@ class BasketService extends BaseService {
 
         if (basket.cargoPrice === settings.cargoPrice) return basket;
 
-        const netCargoPrice = Math.abs(calc(basket.cargoPrice - settings.cargoPrice))
+        // const netCargoPrice = Math.abs(calc(basket.cargoPrice - settings.cargoPrice))
 
         return await this.model.update({
             where: {
@@ -312,7 +326,7 @@ class BasketService extends BaseService {
             },
             data: {
                 cargoPrice: settings.cargoPrice,
-                total: calc(basket.total + netCargoPrice)
+                total: await this.calculateBasketTotal(basket.subtotal, basket.campaignDiscount, basket.couponDiscount)
             },
             include: {
                 items: true
@@ -320,8 +334,6 @@ class BasketService extends BaseService {
         });
 
     }
-
-
 
     applyOrCancelCampaign = async (userId) => {
         const basket = await this.getBasket(userId);
@@ -334,6 +346,7 @@ class BasketService extends BaseService {
 
         if (!campaign && !basket.Campaign) return basket;
 
+        // if there is no campaign and there is a campaign in the basket then remove the campaign
         if (!campaign && basket.Campaign) {
             return await this.model.update({
                 where: {
@@ -345,7 +358,7 @@ class BasketService extends BaseService {
                     },
                     campaignDiscount: 0,
                     totalDiscount: calc(basket.totalDiscount - basket.campaignDiscount),
-                    total: calc(basket.total + basket.campaignDiscount)
+                    total: await this.calculateBasketTotal(basket.subtotal, 0, basket.couponDiscount)
                 },
                 include: {
                     items: true,
@@ -354,9 +367,25 @@ class BasketService extends BaseService {
             });
         }
 
-        if (basket.Campaign && basket.Campaign.id === campaign.id) return basket;
-
         const campaignDiscount = calc(basket.subtotal * campaign.discountPct / 100);
+
+        if (basket.Campaign && basket.Campaign.id === campaign.id) {
+            return await this.model.update({
+                where: {
+                    id: basket.id
+                },
+                data: {
+                    campaignDiscount: campaignDiscount,
+                    totalDiscount: calc(basket.couponDiscount + campaignDiscount),
+                    total: await this.calculateBasketTotal(basket.subtotal, campaignDiscount, basket.couponDiscount)
+                },
+                include: {
+                    items: true,
+                    Campaign: true
+                }
+            });
+        }
+
 
         const newBasket = await this.model.update({
             where: {
@@ -387,7 +416,7 @@ class BasketService extends BaseService {
                 ),
                 campaignDiscount: campaignDiscount,
                 totalDiscount: calc(basket.couponDiscount + campaignDiscount),
-                total: calc(basket.total - campaignDiscount)
+                total: await this.calculateBasketTotal(basket.subtotal, campaignDiscount, basket.couponDiscount)
             },
             include: {
                 items: {
@@ -422,7 +451,7 @@ class BasketService extends BaseService {
                 data: {
                     couponDiscount: couponDiscount,
                     totalDiscount: calc(basket.campaignDiscount + couponDiscount),
-                    total: calc(basket.total - couponDiscount)
+                    total: await this.calculateBasketTotal(basket.subtotal, basket.campaignDiscount, couponDiscount)
                 },
                 include: {
                     items: true,
@@ -439,7 +468,7 @@ class BasketService extends BaseService {
             data: {
                 couponDiscount: coupon.discount,
                 totalDiscount: calc(basket.campaignDiscount + coupon.discount),
-                total: calc(basket.total - (coupon.discount > basket.total ? basket.total : coupon.discount))
+                total: await this.calculateBasketTotal(basket.subtotal, basket.campaignDiscount, coupon.discount)
             },
             include: {
                 items: true,

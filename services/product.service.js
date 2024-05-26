@@ -37,6 +37,55 @@ class ProductService extends BaseService {
         });
     }
 
+    bulkDecrementProductStock = async (orderItems = []) => {
+        return prisma.$transaction(orderItems.map((orderItem) => {
+            return this.model.update({
+                where: { id: orderItem?.productId },
+                data: {
+                    stockQuantity: {
+                        decrement: orderItem.quantity
+                    }
+                }
+            })
+        }));
+    }
+
+    bulkIncrementProductStock = async (orderItems = []) => {
+        return prisma.$transaction(orderItems.map((orderItem) => {
+            return this.model.update({
+                where: { id: orderItem?.productId },
+                data: {
+                    stockQuantity: {
+                        increment: orderItem.quantity
+                    }
+                }
+            })
+        }));
+    }
+
+    decrementProductStock = async (id, quantity = 1) => {
+        return this.model.update({
+            where: { id },
+            data: {
+                stockQuantity: {
+                    decrement: quantity
+                }
+            }
+        });
+    }
+
+    incrementProductStock = async (id, quantity = 1) => {
+        return this.model.update({
+            where: { id },
+            data: {
+                stockQuantity: {
+                    increment: quantity
+                }
+            }
+        });
+    }
+
+
     isProductStockAvailable = async (id, quantity = 1) => {
         const product = await this.model.findFirst({
             where: { id },

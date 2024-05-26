@@ -8,6 +8,14 @@ async function getOrders(req, res, next) {
         next(error);
     }
 }
+async function getOrder(req, res, next) {
+    try {
+        const order = await orderService.getOrder(req.user?.id, req.params?.id);
+        res.json(order);
+    } catch (error) {
+        next(error);
+    }
+}
 
 async function createOrder(req, res, next) {
     try {
@@ -19,7 +27,41 @@ async function createOrder(req, res, next) {
     }
 }
 
+async function cancelOrder(req, res, next) {
+    try {
+        const order = await orderService.cancelOrder(req.user.id, req.params?.id);
+        res.json(order);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function updateItemQuantity(req, res, next) {
+    try {
+        const { itemId, quantity } = req.body;
+        const order = await orderService.updateOrderItemQuantity(req.user.id, req.params?.id, itemId, quantity);
+        res.json(order);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function updateOrderStatus(req, res, next) {
+    try {
+        const order = await orderService.updateOrderStatus(req.user.id, req.params?.id, req.body.status);
+        res.json(order);
+    } catch (error) {
+        next(error);
+    }
+
+}
+
 module.exports = {
     getOrders,
-    createOrder
+    getOrder,
+    updateItemQuantity,
+    createOrder,
+    cancelOrder,
+    updateOrderStatus
 };

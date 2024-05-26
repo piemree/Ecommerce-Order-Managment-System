@@ -1,4 +1,3 @@
-const prisma = require('../prisma/index.js');
 const basketService = require('../services/basket.service.js');
 const AppError = require('../errors/app.error.js');
 const { isProductStockAvailable } = require('../services/product.service.js');
@@ -27,8 +26,8 @@ async function addItem(req, res, next) {
 
 async function removeItem(req, res, next) {
     try {
-        const { productId } = req.body;
-        const basket = await basketService.removeItem(req.user.id, productId);
+        const { basketItemId } = req.body;
+        const basket = await basketService.removeItem(req.user.id, basketItemId);
         res.json(basket);
     } catch (error) {
         next(error);
@@ -37,11 +36,8 @@ async function removeItem(req, res, next) {
 
 async function updateItemQuantity(req, res, next) {
     try {
-        const { productId, quantity } = req.body;
-        const isStockAvailable = await isProductStockAvailable(productId, quantity);
-        if (!isStockAvailable) return next(AppError.StockNotAvailable());
-
-        const basket = await basketService.updateItemQuantity(req.user.id, productId, quantity);
+        const { basketItemId, quantity } = req.body;
+        const basket = await basketService.updateItemQuantity(req.user.id, basketItemId, quantity);
         res.json(basket);
     } catch (error) {
         next(error);

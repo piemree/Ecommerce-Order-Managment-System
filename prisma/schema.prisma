@@ -50,8 +50,8 @@ model Product {
 
 enum OrderStatus {
   PROCESSING
-  PAYMENT_COMPLETED
   SHIPPED
+  CANCELLED
   DELIVERED
 }
 
