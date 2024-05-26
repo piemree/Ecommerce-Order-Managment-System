@@ -1,7 +1,14 @@
 const express = require('express');
 const authenticate = require('../middlewares/authenticate.middleware');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../docs/swagger-output.json');
 const router = express.Router();
 
+
+
+
+router.use('/docs', swaggerUi.serve);
+router.get('/docs', swaggerUi.setup(swaggerDocument));
 router.use('/auth', require('./auth.router'));
 router.use(authenticate);
 router.use('/product', require('./product.router'));
