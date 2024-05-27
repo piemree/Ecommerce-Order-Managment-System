@@ -1,6 +1,6 @@
 # E-ticaret Sipariş Yönetim Sistemi
 
-Bu projede bir e-ticaret uygulamasının sepet ve sipariş ağırlıklı backend kısımları rest api olarak oluşturulmuştur.
+Bu projede bir e-ticaret uygulamasının sepet ve sipariş ağırlıklı backend kısımları rest api olarak oluşturulmuştur. Api de Redis, Docker, RabbitMQ gibi teknolojiler kullanılmıştır.
 
 ## Başlangıç
 
@@ -17,7 +17,7 @@ Bu projede bir e-ticaret uygulamasının sepet ve sipariş ağırlıklı backend
 docker compose build
 ```
 
-Ardından projeyi konteynır üzerinde çalıştırmak için aşşağıdaki komutu yzıyoruz.
+Ardından projeyi konteynır üzerinde çalıştırmak için aşağıdaki komutu yzıyoruz.
 
 ```
 docker compose up
@@ -25,7 +25,7 @@ docker compose up
 
 ### Seedleri Çalıştırmak
 
-Örnek verileri veritabanına yüklemek için aşşağıdaki kodu çalıştırmanız yeterlidir. Bu işlemi projeyi docker ile ayağa kaldırdıkdan sonra yapınız.
+Örnek verileri veritabanına yüklemek için aşağıdaki kodu çalıştırmanız yeterlidir. Bu işlemi projeyi docker ile ayağa kaldırdıkdan sonra yapınız.
 
 ```
 npx prisma db seed
@@ -35,4 +35,12 @@ Halihazırda bir veriniz var ise ve veri tabanını sıfırlayıp seedleri yükl
 
 ```
 npx prisma migrate reset
+```
+
+### Swagger
+
+swagger ui ile endpointleri görmek için:
+
+```
+yarn swagger
 ```

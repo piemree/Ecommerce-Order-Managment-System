@@ -16,7 +16,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.13.1",
     "@prisma/client": "^5.14.0",
     "amqplib": "^0.10.4",
     "bcrypt": "^5.1.1",

@@ -1,2 +1,2 @@
 npx prisma db push
-yarn dev
+yarn start

@@ -7,6 +7,7 @@ async function messageQueue() {
     const channel = await getChannel();
     await channel.assertQueue(queueName, { durable: false });
     channel.consume(queueName, mailConsumer);
+    return channel;
 }
 
 async function mailConsumer(json) {

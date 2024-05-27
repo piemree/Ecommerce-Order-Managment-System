@@ -9,15 +9,21 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-queue.messageQueue();
+
 
 
 app.use('/api', require('./router'));
 app.use(errorHandler);
 
 app.listen(port, async () => {
-    await settingsService.createSetting(settings);
-    //await queue.sendMailToQueue({ userEmail: 'pi.emree@gmail.com', subject: 'Mail Subject', text: 'mail text' });
-    console.log(`Server is running on port ${port}`);
+    try {
+        await settingsService.createSetting(settings);
+        await queue.messageQueue()
+        //await queue.sendMailToQueue({ userEmail: 'pi.emree@gmail.com', subject: 'Mail Subject', text: 'mail text' });
+        console.log(`Server is running on port ${port}`);
+    } catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
 }
 );

@@ -4,8 +4,8 @@ services:
   # Express.js app
   app:
     depends_on:
-      - postgres
       - rabbitmq
+      - postgres
       - redis
     container_name: express-app
     build: .
@@ -31,8 +31,6 @@ services:
 
   # RabbitMQ
   rabbitmq:
-    depends_on:
-      - postgres
     container_name: rabbitmq
     image: rabbitmq:3-management
     ports:
@@ -49,7 +47,10 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
 
 volumes:
   postgres_data: {}
   rabbitmq: {}
+  redis_data: {}
