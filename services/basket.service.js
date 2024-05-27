@@ -4,7 +4,7 @@ const productService = require('./product.service');
 const campaignService = require('./campaign.service');
 const settingsService = require('./settings.service');
 const couponService = require('./coupon.service');
-const AppError = require('../errors/app.error');
+const AppError = require('../errors/App.error');
 const { calc } = require('../utils/decimal.util');
 
 class BasketService extends BaseService {

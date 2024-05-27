@@ -1,6 +1,6 @@
 const prisma = require('../prisma');
 const BaseService = require('./base.service');
-const AppError = require('../errors/app.error');
+const AppError = require('../errors/App.error');
 
 class CouponService extends BaseService {
     constructor() {
