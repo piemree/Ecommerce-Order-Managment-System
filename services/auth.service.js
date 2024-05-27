@@ -2,7 +2,7 @@ const prisma = require('../prisma');
 const BaseService = require('./base.service');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const AppError = require('../errors/App.error');
+const AppError = require('../errors');
 const _ = require('lodash');
 
 class AuthService extends BaseService {

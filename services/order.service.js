@@ -1,4 +1,4 @@
-const AppError = require('../errors/App.error');
+const AppError = require('../errors');
 const prisma = require('../prisma');
 const { calc } = require('../utils/decimal.util');
 const BaseService = require('./base.service');
