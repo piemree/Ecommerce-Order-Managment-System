@@ -1,5 +1,5 @@
 const basketService = require('../services/basket.service.js');
-const AppError = require('../errors/index.js');
+const AppError = require('../errors/app.error.js');
 const { isProductStockAvailable } = require('../services/product.service.js');
 
 async function getBasket(req, res, next) {

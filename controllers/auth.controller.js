@@ -1,5 +1,5 @@
 const authService = require('../services/auth.service.js');
-const AppError = require('../errors/index.js');
+const AppError = require('../errors/app.error.js');
 
 async function login(req, res, next) {
     try {

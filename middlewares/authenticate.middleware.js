@@ -1,5 +1,5 @@
 const { verifyUser } = require("../services/auth.service");
-const AppError = require("../errors");
+const AppError = require("../errors/app.error");
 const _ = require("lodash");
 
 async function authenticate(req, res, next) {

@@ -1,6 +1,6 @@
 // create a function that takes a number and returns a number with 2 decimal places
 
-const AppError = require("../errors")
+const AppError = require("../errors/app.error")
 
 function calc(number) {
     // check is number is a number
