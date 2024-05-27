@@ -30,3 +30,9 @@ docker compose up
 ```
 npx prisma db seed
 ```
+
+Halihazırda bir veriniz var ise ve veri tabanını sıfırlayıp seedleri yüklemek istiyorsanız aşağıdaki komutu çalıştırın
+
+```
+npx prisma migrate reset
+```

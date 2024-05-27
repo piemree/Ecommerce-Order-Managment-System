@@ -5,6 +5,7 @@ services:
   app:
     depends_on:
       - postgres
+      - rabbitmq
     container_name: express-app
     build: .
     # run the run.sh file
@@ -27,5 +28,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # RabbitMQ
+  rabbitmq:
+    depends_on:
+      - postgres
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
 volumes:
   postgres_data: {}
+  rabbitmq: {}

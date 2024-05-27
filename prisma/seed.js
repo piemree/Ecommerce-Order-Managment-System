@@ -7,7 +7,18 @@ const settingsSeed = require('./seeds/settings.seed.json');
 const campaignSeed = require('./seeds/campaign.seed.json');
 const couponSeed = require('./seeds/coupon.seed.json');
 
+async function isDbEmpty() {
+    const [users, categories, products, settings, campaigns, coupons] = await Promise.all([
+        prisma.user.findMany(),
+        prisma.category.findMany(),
+        prisma.product.findMany(),
+        prisma.settings.findMany(),
+        prisma.campaign.findMany(),
+        prisma.coupon.findMany()
+    ])
+    return users.length === 0 && categories.length === 0 && products.length === 0 && settings.length === 0 && campaigns.length === 0 && coupons.length === 0
 
+}
 
 async function transaction() {
 
@@ -63,6 +74,12 @@ async function transaction() {
 
 async function seed() {
     try {
+        const empty = await isDbEmpty()
+        if (!empty) {
+            console.log('Database is not empty, skipping seed')
+            console.log("if you want to delete all data and seed again, run 'npx prisma db seed --force'");
+            return
+        }
         await transaction()
         await prisma.$disconnect()
     } catch (e) {

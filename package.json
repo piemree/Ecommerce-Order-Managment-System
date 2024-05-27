@@ -6,16 +6,18 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "swagger": "node ./docs/swagger.js"
+    "swagger": "node ./docs/swagger.js",
+    "dbpush": "npx prisma db push"
   },
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed": "yarn dbpush && node prisma/seed.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.14.0",
+    "amqplib": "^0.10.4",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

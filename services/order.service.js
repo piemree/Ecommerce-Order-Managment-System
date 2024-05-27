@@ -8,6 +8,7 @@ const settingsService = require('./settings.service');
 const campaignService = require('./campaign.service');
 const mailService = require('./mail.service');
 const { $Enums } = require('@prisma/client');
+const { sendMailToQueue } = require('../queue');
 
 class OrderService extends BaseService {
     constructor() {
@@ -15,7 +16,8 @@ class OrderService extends BaseService {
         this.model = prisma.order;
     }
 
-    createOrder = async (userId, shippingAddress) => {
+    createOrder = async (user, shippingAddress) => {
+        const { userId, email } = user;
         const basket = await BasketService.getBasket(userId);
 
         if (!basket) throw new AppError('Basket not found');
@@ -71,7 +73,12 @@ class OrderService extends BaseService {
         await productService.bulkDecrementProductStock(order.items);
 
         await BasketService.resetBasket(userId);
-        await mailService.sendMail(userId, 'Order Created', 'Your order has been created successfully');
+        // await mailService.sendMail(userId, 'Order Created', 'Your order has been created successfully');
+        sendMailToQueue({
+            userEmail: email,
+            subject: 'Order Created',
+            text: 'Your order has been created successfully',
+        })
         return order;
     }
 
