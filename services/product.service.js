@@ -1,10 +1,41 @@
 const prisma = require('../prisma');
 const BaseService = require('./base.service');
+const cacheService = require('./cache.service');
 
 class ProductService extends BaseService {
     constructor() {
         super();
         this.model = prisma.product;
+    }
+
+    getAllProducts = async () => {
+        const cachedProducts = await cacheService.get('products');
+        if (cachedProducts) return cachedProducts;
+        // await 5 secons
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        const products = await this.model.findMany({
+            include: {
+                category: true
+            }
+        });
+        await cacheService.set('products', products, 20);
+        return products;
+    }
+
+    searchProducts = async (searchTerm) => {
+        console.log('searchTerm', searchTerm);
+        return this.model.findMany({
+            where: {
+                OR: [
+                    { title: { contains: searchTerm } },
+                    // { description: { contains: searchTerm } },
+                    // { origin: { contains: searchTerm } },
+                    // { flavorNotes: { contains: searchTerm } }
+                ]
+            },
+            //limit
+            take: 1
+        });
     }
 
     findProductById = async (id) => {

@@ -6,6 +6,8 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - redis
+      - elasticsearch
     container_name: express-app
     build: .
     # run the run.sh file
@@ -42,6 +44,17 @@ services:
       RABBITMQ_DEFAULT_PASS: rabbitmq
     volumes:
       - rabbitmq:/var/lib/rabbitmq
+    # redis
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+  elasticsearch:
+    image: elasticsearch:8.13.4
+    ports:
+      - "9200:9200"
+      - "9201:9201"
 
 volumes:
   postgres_data: {}

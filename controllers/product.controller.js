@@ -1,16 +1,25 @@
-const { category } = require('../prisma/index.js');
 const productService = require('../services/product.service.js');
 
-async function getProducts(req, res) {
+async function getProducts(req, res, next) {
     try {
-        const products = await productService.findMany();
+        const products = await productService.getAllProducts();
         res.json(products);
     } catch (error) {
-        res.status(500).send(error.message);
+        next(error);
     }
 }
 
-async function createProduct(req, res) {
+async function searchProducts(req, res, next) {
+    try {
+        const searchTerm = req.query?.searchTerm;
+        const products = await productService.searchProducts(searchTerm);
+        res.json(products);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function createProduct(req, res, next) {
     try {
         const productData = {
             title: req.body?.title,
@@ -26,7 +35,7 @@ async function createProduct(req, res) {
         const product = await productService.createProduct(productData, req.body?.categoryId);
         res.json(product);
     } catch (error) {
-        res.status(500).send(error.message);
+        next(error);
     }
 }
 
@@ -43,5 +52,6 @@ async function updateProductStock(req, res, next) {
 module.exports = {
     getProducts,
     createProduct,
-    updateProductStock
+    updateProductStock,
+    searchProducts
 };
