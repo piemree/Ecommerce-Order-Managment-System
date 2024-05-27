@@ -6,6 +6,7 @@ class ProductService extends BaseService {
     constructor() {
         super();
         this.model = prisma.product;
+
     }
 
     getAllProducts = async () => {
@@ -22,21 +23,6 @@ class ProductService extends BaseService {
         return products;
     }
 
-    searchProducts = async (searchTerm) => {
-        console.log('searchTerm', searchTerm);
-        return this.model.findMany({
-            where: {
-                OR: [
-                    { title: { contains: searchTerm } },
-                    // { description: { contains: searchTerm } },
-                    // { origin: { contains: searchTerm } },
-                    // { flavorNotes: { contains: searchTerm } }
-                ]
-            },
-            //limit
-            take: 1
-        });
-    }
 
     findProductById = async (id) => {
         return this.model.findUnique({

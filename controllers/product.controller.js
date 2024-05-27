@@ -9,15 +9,6 @@ async function getProducts(req, res, next) {
     }
 }
 
-async function searchProducts(req, res, next) {
-    try {
-        const searchTerm = req.query?.searchTerm;
-        const products = await productService.searchProducts(searchTerm);
-        res.json(products);
-    } catch (error) {
-        next(error);
-    }
-}
 
 async function createProduct(req, res, next) {
     try {
@@ -53,5 +44,5 @@ module.exports = {
     getProducts,
     createProduct,
     updateProductStock,
-    searchProducts
+    
 };
