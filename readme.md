@@ -37,10 +37,10 @@ Halihazırda bir veriniz var ise ve veri tabanını sıfırlayıp seedleri yükl
 npx prisma migrate reset
 ```
 
-### Swagger
+### RabbitMQ Uİ
 
-swagger ui ile endpointleri görmek için:
+RabbitMQ ui a [http://localhost:15672 ]() linkinden ulaşabilirsin.
 
-```
-yarn swagger
-```
+### SWAGGER
+
+Endpointleri görmek için Swagger ui a [http://localhost:3000/api/docs]() dan ulaşabilirsin.
