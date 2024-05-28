@@ -4,6 +4,7 @@ async function createCoupon(req, res, next) {
     try {
         const couponData = {
             code: req.body?.code,
+            name: req.body?.name,
             isActive: req.body?.isActive,
             isPercent: req.body?.isPercent,
             discountPct: req.body?.discountPct,

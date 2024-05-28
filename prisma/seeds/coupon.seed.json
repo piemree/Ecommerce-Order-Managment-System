@@ -1,5 +1,6 @@
 {
   "code": "TTN123TTT01",
+  "name": "10% indirm",
   "isActive": true,
   "isPercent": true,
   "discountPct": 10,

@@ -7,30 +7,32 @@ const queue = require('./queue');
 const app = express();
 const port = process.env.PORT || 3000;
 
-let count = 0;
+let exitCount = 0;
 
 async function run() {
-    if (count > 3) {
+    if (exitCount > 3) {
         console.log('Server could not start');
         process.exit(1);
     }
     try {
-        await queue.messageQueue()
-        await settingsService.createSetting(settings);
-        //await queue.sendMailToQueue({ userEmail: 'pi.emree@gmail.com', subject: 'Mail Subject', text: 'mail text' });
-
+    
         app.use(express.json());
 
         app.use('/api', require('./router'));
         app.use(errorHandler);
+
+        await settingsService.createSetting(settings);
+
+        //for try to test mq send mail
+       // await queue.sendMailToQueue({ userEmail: 'pi.emree@gmail.com', subject: 'Mail Subject', text: 'mail text' });
         app.listen(port, async () => {
             console.log(`Server is running on port ${port}`);
         });
     } catch (error) {
-        console.log(`server could not start. Error: ${error.message}, try: ${count}`);
+        console.log(`server could not start. Error: ${error.message}, try: ${exitCount}`);
         setTimeout(run, 3000);
     }
-    count++;
+    exitCount++;
 }
 
 run();

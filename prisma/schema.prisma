@@ -78,6 +78,8 @@ model Basket {
   totalDiscount    Float        @default(0)
   Campaign         Campaign?    @relation(fields: [campaignId], references: [id])
   campaignId       Int?
+  Coupon           Coupon?      @relation(fields: [couponId], references: [id])
+  couponId         Int?
 }
 
 model OrderItem {
@@ -107,6 +109,8 @@ model Order {
   updatedAt        DateTime    @updatedAt
   Campaign         Campaign?   @relation(fields: [campaignId], references: [id])
   campaignId       Int?
+  Coupon           Coupon?     @relation(fields: [couponId], references: [id])
+  couponId         Int?
 }
 
 model Campaign {
@@ -125,6 +129,7 @@ model Campaign {
 model Coupon {
   id          Int      @id @default(autoincrement())
   code        String   @unique
+  name        String
   isActive    Boolean
   isPercent   Boolean
   discountPct Float
@@ -134,6 +139,8 @@ model Coupon {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   User        User[]
+  Basket      Basket[]
+  Order       Order[]
 }
 
 model Settings {

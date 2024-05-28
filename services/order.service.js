@@ -9,6 +9,7 @@ const campaignService = require('./campaign.service');
 const mailService = require('./mail.service');
 const { $Enums } = require('@prisma/client');
 const { sendMailToQueue } = require('../queue');
+const couponService = require('./coupon.service');
 
 class OrderService extends BaseService {
     constructor() {
@@ -57,6 +58,13 @@ class OrderService extends BaseService {
                             id: basket.campaignId,
                         },
                     })
+                },
+                Coupon: {
+                    ...(basket.couponId && {
+                        connect: {
+                            id: basket.couponId,
+                        },
+                    })
                 }
             },
             include: {
@@ -66,6 +74,7 @@ class OrderService extends BaseService {
                     },
                 },
                 Campaign: true,
+                Coupon: true
             },
         });
 
@@ -82,8 +91,6 @@ class OrderService extends BaseService {
         return order;
     }
 
-
-
     cancelOrder = async (userId, orderId) => {
         const order = await this.getOrder(userId, orderId)
 
@@ -91,6 +98,7 @@ class OrderService extends BaseService {
 
         await productService.bulkIncrementProductStock(order.items);
 
+        await couponService.incrementUsage(order.Coupon?.id)
         return this.model.update({
             where: {
                 id: parseInt(orderId),
@@ -105,6 +113,7 @@ class OrderService extends BaseService {
                     },
                 },
                 Campaign: true,
+                Coupon: true
             },
         });
     }
@@ -181,6 +190,7 @@ class OrderService extends BaseService {
                     },
                 },
                 Campaign: true,
+                Coupon: true
             },
         });
         return await this.orderControls(userId, orderId);
@@ -198,6 +208,7 @@ class OrderService extends BaseService {
                     },
                 },
                 Campaign: true,
+                Coupon: true
             },
         });
     }
@@ -215,6 +226,7 @@ class OrderService extends BaseService {
                     },
                 },
                 Campaign: true,
+                Coupon: true
             },
         });
     }
@@ -235,6 +247,7 @@ class OrderService extends BaseService {
                     },
                 },
                 Campaign: true,
+                Coupon: true
             },
         });
 
@@ -326,7 +339,8 @@ class OrderService extends BaseService {
                         }
 
                     },
-                    Campaign: true
+                    Campaign: true,
+                    Coupon: true
                 }
             });
         }
@@ -349,7 +363,8 @@ class OrderService extends BaseService {
                             product: true
                         }
                     },
-                    Campaign: true
+                    Campaign: true,
+                    Coupon: true
                 }
             });
         }
@@ -391,7 +406,8 @@ class OrderService extends BaseService {
                         product: true
                     }
                 },
-                Campaign: true
+                Campaign: true,
+                Coupon: true
             }
         });
 

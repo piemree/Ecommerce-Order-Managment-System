@@ -69,6 +69,51 @@ class CouponService extends BaseService {
         });
     }
 
+    findCouponById = async (couponId) => {
+        return this.model.findFirst({
+            where: {
+                id: couponId
+            }
+        });
+    }
+
+    decrementUsage = async (couponId) => {
+        const coupon = await this.findCouponById(couponId)
+        if (coupon.usageCount <= 0) {
+            return await this.model.update({
+                where: {
+                    id: couponId
+                },
+                data: {
+                    usageCount: 0
+                }
+            })
+        }
+        return await this.model.update({
+            where: {
+                id: couponId
+            },
+            data: {
+                usageCount: {
+                    decrement: 1
+                }
+            }
+        })
+    }
+
+    incrementUsage = async (couponId) => {
+        await this.model.update({
+            where: {
+                id: couponId
+            },
+            data: {
+                usageCount: {
+                    increment: 1
+                }
+            }
+        })
+    }
+
 }
 
 module.exports = new CouponService();

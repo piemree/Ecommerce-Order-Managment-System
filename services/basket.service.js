@@ -25,6 +25,7 @@ class BasketService extends BaseService {
                     }
                 },
                 Campaign: true,
+                Coupon: true
             }
         });
         if (basket) return basket;
@@ -43,7 +44,8 @@ class BasketService extends BaseService {
                         product: true
                     }
                 },
-                Campaign: true
+                Campaign: true,
+                Coupon: true
             }
         });
 
@@ -143,16 +145,10 @@ class BasketService extends BaseService {
     }
 
     resetBasket = async (userId) => {
-        const basket = await this.model.findFirst({
-            where: {
-                userId
-            },
-            include: {
-                items: true
-            }
-        });
+        const basket = await this.getBasket(userId)
 
         if (!basket) return false;
+        if (basket.Coupon) await couponService.incrementUsage(order.Coupon?.id)
 
         return await this.model.update({
             where: {
@@ -163,6 +159,9 @@ class BasketService extends BaseService {
                     deleteMany: {}
                 },
                 Campaign: {
+                    disconnect: true
+                },
+                Coupon: {
                     disconnect: true
                 },
                 cargoPrice: 0,
@@ -362,7 +361,8 @@ class BasketService extends BaseService {
                 },
                 include: {
                     items: true,
-                    Campaign: true
+                    Campaign: true,
+                    Coupon: true
                 }
             });
         }
@@ -381,7 +381,8 @@ class BasketService extends BaseService {
                 },
                 include: {
                     items: true,
-                    Campaign: true
+                    Campaign: true,
+                    Coupon: true
                 }
             });
         }
@@ -424,7 +425,8 @@ class BasketService extends BaseService {
                         product: true
                     }
                 },
-                Campaign: true
+                Campaign: true,
+                Coupon: true
             }
         });
 
@@ -437,10 +439,11 @@ class BasketService extends BaseService {
 
         if (!basket) return false;
         if (basket.items.length === 0) return await this.resetBasket(userId);
-
+        if (basket.Coupon) throw new AppError('Coupon already applied')
         const coupon = await couponService.isCouponCodeAvailable(userId, couponCode);
         if (!coupon) throw new AppError('Invalid coupon code');
 
+        await couponService.incrementUsage(coupon.id)
 
         if (coupon.isPercent) {
             const couponDiscount = calc(basket.subtotal * coupon.discountPct / 100);
@@ -449,13 +452,19 @@ class BasketService extends BaseService {
                     id: basket.id
                 },
                 data: {
+                    Coupon: {
+                        connect: {
+                            id: coupon.id
+                        }
+                    },
                     couponDiscount: couponDiscount,
                     totalDiscount: calc(basket.campaignDiscount + couponDiscount),
                     total: await this.calculateBasketTotal(basket.subtotal, basket.campaignDiscount, couponDiscount)
                 },
                 include: {
                     items: true,
-                    Campaign: true
+                    Campaign: true,
+                    Coupon: true
                 }
             });
 
@@ -466,13 +475,55 @@ class BasketService extends BaseService {
                 id: basket.id
             },
             data: {
+                Coupon: {
+                    connect: {
+                        id: coupon.id
+                    }
+                },
                 couponDiscount: coupon.discount,
                 totalDiscount: calc(basket.campaignDiscount + coupon.discount),
                 total: await this.calculateBasketTotal(basket.subtotal, basket.campaignDiscount, coupon.discount)
             },
             include: {
                 items: true,
-                Campaign: true
+                Campaign: true,
+                Coupon: true
+            }
+        });
+
+
+    }
+
+    cancelCurrentCoupon = async (userId) => {
+        const basket = await this.getBasket(userId)
+        if (!basket) return basket;
+        if (!basket.Coupon) return basket
+        const coupon = basket.Coupon
+
+        await couponService.decrementUsage(coupon.id)
+
+        return await this.model.update({
+            where: {
+                id: basket.id
+            },
+            data: {
+                Coupon: {
+                    disconnect: {
+                        id: coupon.id
+                    }
+                },
+                couponDiscount: 0,
+                totalDiscount: basket.campaignDiscount,
+                total: await this.calculateBasketTotal(basket.subtotal, basket.campaignDiscount, 0)
+            },
+            include: {
+                items: {
+                    include: {
+                        product: true
+                    }
+                },
+                Campaign: true,
+                Coupon: true
             }
         });
 
