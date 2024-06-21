@@ -32,8 +32,8 @@ async function createProduct(req, res, next) {
 
 async function updateProductStock(req, res, next) {
     try {
-        const { productId, quantity } = req.body;
-        const product = await productService.updateProductStock(productId, quantity);
+        const { productId, stockQuantity } = req.body;
+        const product = await productService.updateProductStock(productId, stockQuantity);
         res.json(product);
     } catch (error) {
         next(error);
