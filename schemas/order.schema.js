@@ -2,7 +2,7 @@ const { $Enums } = require("@prisma/client")
 const joi = require("joi")
 
 const createOrderSchema = {
-    shippingAddress: joi.string().email().required(),
+    shippingAddress: joi.string().required(),
 }
 
 const updateOrderQuantitySchema = {

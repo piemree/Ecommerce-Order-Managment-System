@@ -18,8 +18,9 @@ class OrderService extends BaseService {
     }
 
     createOrder = async (user, shippingAddress) => {
-        const { userId, email } = user;
-        const basket = await BasketService.getBasket(userId);
+      
+        
+        const basket = await BasketService.getBasket(user.id);
 
         if (!basket) throw new AppError('Basket not found');
 
@@ -29,7 +30,7 @@ class OrderService extends BaseService {
             data: {
                 user: {
                     connect: {
-                        id: userId,
+                        id: user.id,
                     },
                 },
                 cargoPrice: basket.cargoPrice,
@@ -81,10 +82,10 @@ class OrderService extends BaseService {
 
         await productService.bulkDecrementProductStock(order.items);
 
-        await BasketService.resetBasket(userId);
+        await BasketService.resetBasket(user.id);
         // await mailService.sendMail(userId, 'Order Created', 'Your order has been created successfully');
         sendMailToQueue({
-            userEmail: email,
+            userEmail: user.email,
             subject: 'Order Created',
             text: 'Your order has been created successfully',
         })

@@ -147,8 +147,9 @@ class BasketService extends BaseService {
     resetBasket = async (userId) => {
         const basket = await this.getBasket(userId)
 
+
         if (!basket) return false;
-        if (basket.Coupon) await couponService.incrementUsage(order.Coupon?.id)
+        if (basket.Coupon) await couponService.incrementUsage(basket.Coupon?.id)
 
         return await this.model.update({
             where: {
