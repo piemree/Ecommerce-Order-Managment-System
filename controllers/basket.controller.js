@@ -54,6 +54,15 @@ async function applyCoupon(req, res, next) {
     }
 }
 
+async function cancelCurrentCoupon(req, res, next) {
+    try {
+        const basket = await basketService.cancelCurrentCoupon(req.user.id);
+        res.json(basket);
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 
 
@@ -62,5 +71,6 @@ module.exports = {
     addItem,
     removeItem,
     updateItemQuantity,
-    applyCoupon
+    applyCoupon,
+    cancelCurrentCoupon
 };

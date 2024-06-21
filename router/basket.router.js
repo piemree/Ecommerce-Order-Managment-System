@@ -9,6 +9,7 @@ router.patch('/addItem', validateSchema(addItemToBasketSchema), basketController
 router.patch('/removeItem', validateSchema(removeItemFromBasketSchema), basketController.removeItem);
 router.patch('/updateItemQuantity', validateSchema(updateBasketItemQuantitySchema), basketController.updateItemQuantity);
 router.patch('/applyCoupon', validateSchema(applyCouponToBasketSchema), basketController.applyCoupon);
+router.patch('/cancelCurrentCoupon', basketController.cancelCurrentCoupon);
 
 
 module.exports = router;

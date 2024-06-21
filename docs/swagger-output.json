@@ -2,27 +2,12 @@
   "openapi": "3.0.0",
   "info": {
     "version": "1.0.0",
-    "title": "Ecommerce order API",
-    "description": "Ecommerce order API"
+    "title": "REST API",
+    "description": ""
   },
   "servers": [
     {
-      "url": "http://localhost:5000/api"
-    }
-  ],
-
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    }
-  },
-  "security": [
-    {
-      "bearerAuth": [""]
+      "url": "http://localhost:3000/"
     }
   ],
   "paths": {
@@ -51,12 +36,10 @@
                 "type": "object",
                 "properties": {
                   "email": {
-                    "type": "string",
-                    "example": "xpokales@gmail.com"
+                    "example": "any"
                   },
                   "password": {
-                    "type": "string",
-                    "example": "123456"
+                    "example": "any"
                   }
                 }
               }
@@ -110,9 +93,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       },
@@ -130,9 +110,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
